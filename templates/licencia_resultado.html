@@ -1,0 +1,64 @@
+{% extends "app_base.html" %}
+{% block title %}Informe de viabilidad · {{ datos.municipio }} · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <div>
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Licencias</p>
+        <h1 class="text-2xl font-semibold text-slate-100">Informe de viabilidad urbanística</h1>
+        <p class="text-slate-400 mt-1">{{ datos.direccion }}, {{ datos.municipio }} ({{ datos.provincia }})</p>
+    </div>
+    <a href="/licencia"
+        class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+        Nuevo análisis
+    </a>
+</div>
+
+{% set semaforo_style = {
+    'VERDE': {'ring': 'border-emerald-900/50', 'bg': 'bg-emerald-950/30', 'circle': 'bg-emerald-500/15 text-emerald-400 border-emerald-500/40', 'text': 'text-emerald-400', 'icon': '✓'},
+    'AMARILLO': {'ring': 'border-amber-900/50', 'bg': 'bg-amber-950/30', 'circle': 'bg-amber-500/15 text-amber-400 border-amber-500/40', 'text': 'text-amber-400', 'icon': '!'},
+    'ROJO': {'ring': 'border-red-900/50', 'bg': 'bg-red-950/30', 'circle': 'bg-red-500/15 text-red-400 border-red-500/40', 'text': 'text-red-400', 'icon': '✕'},
+} %}
+{% set style = semaforo_style.get(semaforo, semaforo_style['AMARILLO']) %}
+
+<div class="rounded-2xl border {{ style.ring }} {{ style.bg }} p-6 mb-8 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+    <div class="w-16 h-16 shrink-0 rounded-full border-2 {{ style.circle }} flex items-center justify-center text-2xl font-bold">
+        {{ style.icon }}
+    </div>
+    <div>
+        <p class="text-xs font-medium uppercase tracking-widest text-slate-400">Semáforo de viabilidad</p>
+        <p class="text-2xl font-bold {{ style.text }}">{{ semaforo }}</p>
+        <p class="text-slate-300 mt-1">{{ resumen_semaforo }}</p>
+    </div>
+</div>
+
+<div class="space-y-5">
+    {% for sec in secciones %}
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-ink-700 bg-ink-800/40">
+            <span class="text-gold-400 font-mono text-xs mr-2">{{ sec.codigo }}</span>
+            <span class="text-slate-100 font-semibold">{{ sec.titulo }}</span>
+        </div>
+        <div class="px-6 py-5 prose-invert text-sm text-slate-300 leading-relaxed licencia-seccion">
+            {{ sec.contenido_html | safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<p class="text-slate-500 text-xs mt-8 max-w-3xl">
+    Análisis orientativo generado mediante IA a partir de la legislación urbanística española. No sustituye la
+    consulta previa ni el informe urbanístico municipal.
+</p>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .licencia-seccion p { margin-bottom: 0.75rem; }
+    .licencia-seccion ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+    .licencia-seccion li { margin-bottom: 0.25rem; }
+    .licencia-seccion table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; font-size: 0.8125rem; }
+    .licencia-seccion th, .licencia-seccion td { border: 1px solid #2c3648; padding: 0.5rem 0.75rem; text-align: left; }
+    .licencia-seccion thead { background-color: #171d2b; color: #94a3b8; }
+</style>
+{% endblock %}

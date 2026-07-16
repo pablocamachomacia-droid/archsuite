@@ -1,0 +1,136 @@
+{% extends "app_base.html" %}
+{% block title %}Presupuesto · {{ datos.nombre_proyecto }} · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <div>
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Presupuestos</p>
+        <h1 class="text-2xl font-semibold text-slate-100">{{ datos.nombre_proyecto }}</h1>
+        <p class="text-slate-400 mt-1">{{ datos.direccion }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <form method="post" action="/presupuesto/excel">
+            <input type="hidden" name="datos_json" value="{{ datos_json }}">
+            <button type="submit"
+                class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>
+                Exportar a Excel
+            </button>
+        </form>
+        <a href="/presupuesto"
+            class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+            Nuevo presupuesto
+        </a>
+    </div>
+</div>
+
+{% if es_mock %}
+<div class="rounded-2xl border border-amber-900/50 bg-amber-950/30 p-4 mb-8 flex items-start gap-3">
+    <svg class="w-5 h-5 shrink-0 text-amber-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+    </svg>
+    <p class="text-sm text-amber-200">
+        <strong>Contenido de prueba.</strong> Este presupuesto se ha generado con datos de ejemplo — la integración
+        con la IA de Anthropic todavía no está conectada en esta herramienta.
+    </p>
+</div>
+{% endif %}
+
+<div class="space-y-5 max-w-4xl">
+    {% for cap in capitulos %}
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-ink-700 bg-ink-800/40">
+            <span class="text-gold-400 font-mono text-xs mr-2">{{ cap.codigo }}</span>
+            <span class="text-slate-100 font-semibold">{{ cap.nombre }}</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="text-slate-500 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="text-left font-medium px-6 py-2.5">Descripción</th>
+                        <th class="text-left font-medium px-3 py-2.5">Ud</th>
+                        <th class="text-right font-medium px-3 py-2.5">Cantidad</th>
+                        <th class="text-right font-medium px-3 py-2.5">Precio unitario</th>
+                        <th class="text-right font-medium px-6 py-2.5">Importe</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ink-700/60">
+                    {% for p in cap.partidas %}
+                    <tr>
+                        <td class="px-6 py-2.5 text-slate-300">{{ p.descripcion }}</td>
+                        <td class="px-3 py-2.5 text-slate-400">{{ p.unidad }}</td>
+                        <td class="px-3 py-2.5 text-slate-400 text-right">{{ "%.2f"|format(p.cantidad) }}</td>
+                        <td class="px-3 py-2.5 text-slate-400 text-right">{{ "%.2f"|format(p.precio_unitario) }} €</td>
+                        <td class="px-6 py-2.5 text-slate-200 text-right">{{ "%.2f"|format(p.importe) }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="bg-ink-800/40 font-semibold">
+                        <td colspan="4" class="px-6 py-3 text-right text-slate-300">Subtotal capítulo {{ cap.codigo }}</td>
+                        <td class="px-6 py-3 text-right text-slate-100">{{ "%.2f"|format(cap.subtotal) }} €</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="bg-ink-900 border border-gold-500/30 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-4">Resumen del presupuesto</h2>
+        <table class="w-full text-sm">
+            <tbody class="divide-y divide-ink-700/60">
+                <tr>
+                    <td class="py-2 text-slate-300">Presupuesto de Ejecución Material (PEM)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.pem) }} €</td>
+                </tr>
+                <tr>
+                    <td class="py-2 text-slate-300">Gastos Generales (13%)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.gastos_generales) }} €</td>
+                </tr>
+                <tr>
+                    <td class="py-2 text-slate-300">Beneficio Industrial (6%)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.beneficio_industrial) }} €</td>
+                </tr>
+                <tr class="font-semibold">
+                    <td class="py-2 text-slate-100">Presupuesto de Ejecución por Contrata (PEC)</td>
+                    <td class="py-2 text-right text-slate-100">{{ "%.2f"|format(totales.pec) }} €</td>
+                </tr>
+                <tr>
+                    <td class="py-2 text-slate-300">IVA obra (10%)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.iva_obra) }} €</td>
+                </tr>
+                <tr class="font-semibold">
+                    <td class="py-2 text-slate-100">Total obra (IVA incluido)</td>
+                    <td class="py-2 text-right text-slate-100">{{ "%.2f"|format(totales.total_obra) }} €</td>
+                </tr>
+                {% if totales.honorarios_base > 0 %}
+                <tr>
+                    <td class="py-2 text-slate-300">Honorarios técnicos (base)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.honorarios_base) }} €</td>
+                </tr>
+                <tr>
+                    <td class="py-2 text-slate-300">IVA honorarios (21%)</td>
+                    <td class="py-2 text-right text-slate-200">{{ "%.2f"|format(totales.iva_honorarios) }} €</td>
+                </tr>
+                <tr class="font-semibold">
+                    <td class="py-2 text-slate-100">Total honorarios (IVA incluido)</td>
+                    <td class="py-2 text-right text-slate-100">{{ "%.2f"|format(totales.total_honorarios) }} €</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+        <div class="mt-4 pt-4 border-t border-gold-500/30 flex items-center justify-between">
+            <span class="text-base font-bold text-slate-100">PRESUPUESTO TOTAL</span>
+            <span class="text-2xl font-bold text-gold-400">{{ "%.2f"|format(totales.presupuesto_total) }} €</span>
+        </div>
+    </div>
+</div>
+
+<p class="text-slate-500 text-xs mt-8 max-w-3xl">
+    Presupuesto orientativo generado mediante IA a partir de precios de mercado. Debe ser revisado y ajustado por
+    el técnico competente antes de su uso contractual.
+</p>
+{% endblock %}

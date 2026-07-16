@@ -1,0 +1,106 @@
+{% extends "app_base.html" %}
+{% block title %}Panel · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-10">
+    <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Panel de control</p>
+    <h1 class="text-3xl font-semibold text-slate-100">Hola, {{ user.nombre }} {{ user.apellidos }}</h1>
+    <p class="text-slate-400 mt-2">
+        {{ user.email }}{% if user.empresa %} &middot; {{ user.empresa }}{% endif %}
+    </p>
+</div>
+
+<h2 class="text-sm font-medium text-slate-400 uppercase tracking-widest mb-4">Tus herramientas</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for tool in tools %}
+    <a href="{{ tool.url }}" {% if tool.url.startswith('http') %}target="_blank" rel="noopener"{% endif %}
+        class="group relative overflow-hidden bg-ink-900 border border-ink-700 rounded-2xl p-8 hover:border-blue-500/40 hover:shadow-xl hover:shadow-blue-500/5 transition-all">
+        <div class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-blue-500 to-gold-400 scale-x-0 group-hover:scale-x-100 origin-left transition-transform"></div>
+        <div class="w-14 h-14 rounded-xl bg-ink-800 border border-ink-600 flex items-center justify-center mb-5 group-hover:border-blue-500/40 transition-colors">
+            <svg class="w-7 h-7 text-gold-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons[tool.icon] }}" />
+            </svg>
+        </div>
+        <h3 class="text-slate-100 font-semibold text-xl mb-2">{{ tool.name }}</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">{{ tool.description }}</p>
+        <span class="inline-flex items-center gap-1 mt-6 text-sm text-blue-400 group-hover:text-blue-300 font-medium">
+            Abrir herramienta
+            <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+        </span>
+    </a>
+    {% endfor %}
+</div>
+
+<div id="proyectos" class="mt-12">
+    <h2 class="text-sm font-medium text-slate-400 uppercase tracking-widest mb-4">Últimos proyectos</h2>
+
+    {% set tipo_style = {
+        'licencia': 'text-blue-400 bg-blue-950/40 border-blue-900/50',
+        'memoria': 'text-emerald-400 bg-emerald-950/40 border-emerald-900/50',
+        'presupuesto': 'text-orange-400 bg-orange-950/40 border-orange-900/50',
+        'superficie': 'text-slate-300 bg-slate-800/60 border-slate-600/50',
+        'pliego': 'text-purple-400 bg-purple-950/40 border-purple-900/50',
+    } %}
+
+    {% if proyectos %}
+    <div class="border border-ink-700 rounded-2xl overflow-hidden bg-ink-900/40">
+        <table class="w-full text-sm">
+            <thead class="bg-ink-800/60 text-slate-400 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="text-left font-medium px-6 py-3">Proyecto</th>
+                    <th class="text-left font-medium px-6 py-3">Tipo</th>
+                    <th class="text-left font-medium px-6 py-3">Fecha</th>
+                    <th class="text-left font-medium px-6 py-3">Estado</th>
+                    <th class="text-right font-medium px-6 py-3">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-ink-700">
+                {% for p in proyectos %}
+                <tr class="hover:bg-ink-800/40 transition-colors">
+                    <td class="px-6 py-4 text-slate-200 font-medium">{{ p.nombre_proyecto }}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center text-xs font-medium rounded-full border px-2.5 py-1 {{ tipo_style.get(p.tipo.value, 'text-slate-300 bg-slate-800/60 border-slate-600/50') }}">
+                            {{ tipo_labels[p.tipo.value] }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-400">{{ p.fecha_creacion.strftime('%d/%m/%Y') }}</td>
+                    <td class="px-6 py-4">
+                        {% if p.estado.value == 'completado' %}
+                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 rounded-full px-2.5 py-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Completado
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-400 bg-amber-950/40 border border-amber-900/50 rounded-full px-2.5 py-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Borrador
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="/proyectos/{{ p.id }}"
+                            class="inline-flex items-center gap-1 text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                            Ver resultado
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="border border-dashed border-ink-600 rounded-2xl py-16 flex flex-col items-center justify-center text-center bg-ink-900/40">
+        <div class="w-12 h-12 rounded-full bg-ink-800 border border-ink-600 flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons.folder }}" />
+            </svg>
+        </div>
+        <p class="text-slate-300 font-medium">Aún no has generado ningún proyecto.</p>
+        <p class="text-slate-500 text-sm mt-1 max-w-sm">¡Usa las herramientas de arriba para empezar!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

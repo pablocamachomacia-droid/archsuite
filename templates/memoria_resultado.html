@@ -1,0 +1,53 @@
+{% extends "app_base.html" %}
+{% block title %}Memoria descriptiva · {{ datos.nombre_proyecto }} · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <div>
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Memorias</p>
+        <h1 class="text-2xl font-semibold text-slate-100">{{ datos.nombre_proyecto }}</h1>
+        <p class="text-slate-400 mt-1">{{ datos.direccion }}, {{ datos.municipio }} ({{ datos.provincia }})</p>
+    </div>
+    <a href="/memoria"
+        class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+        Nueva memoria
+    </a>
+</div>
+
+{% if es_mock %}
+<div class="rounded-2xl border border-amber-900/50 bg-amber-950/30 p-4 mb-8 flex items-start gap-3">
+    <svg class="w-5 h-5 shrink-0 text-amber-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+    </svg>
+    <p class="text-sm text-amber-200">
+        <strong>Contenido de prueba.</strong> Esta memoria se ha generado con datos de ejemplo — la integración con
+        la IA de Anthropic todavía no está conectada en esta herramienta.
+    </p>
+</div>
+{% endif %}
+
+<div class="bg-ink-900 border border-ink-700 rounded-2xl px-6 py-6 max-w-3xl memoria-contenido">
+    {{ contenido_html | safe }}
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+    .memoria-contenido h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        border-bottom: 1px solid #212939;
+        padding-bottom: 0.5rem;
+        margin-top: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+    .memoria-contenido h2:first-child { margin-top: 0; }
+    .memoria-contenido p { color: #cbd5e1; font-size: 0.875rem; line-height: 1.6; margin-bottom: 0.75rem; }
+    .memoria-contenido ul { list-style: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; color: #cbd5e1; font-size: 0.875rem; }
+    .memoria-contenido li { margin-bottom: 0.25rem; }
+    .memoria-contenido table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; font-size: 0.8125rem; }
+    .memoria-contenido th, .memoria-contenido td { border: 1px solid #2c3648; padding: 0.5rem 0.75rem; text-align: left; color: #cbd5e1; }
+    .memoria-contenido thead { background-color: #171d2b; color: #94a3b8; }
+</style>
+{% endblock %}

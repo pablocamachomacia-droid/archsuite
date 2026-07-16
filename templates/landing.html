@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}ArchSuite — Suite profesional para arquitectos{% endblock %}
+
+{% block content %}
+<section class="bg-grid border-b border-ink-700">
+    <div class="max-w-5xl mx-auto px-6 py-24 sm:py-32 text-center">
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-4">Portal para arquitectos en España</p>
+        <h1 class="text-4xl sm:text-5xl font-bold text-slate-100 leading-tight tracking-tight">
+            ArchSuite — Suite profesional para arquitectos
+        </h1>
+        <p class="text-slate-400 text-lg mt-6 max-w-2xl mx-auto leading-relaxed">
+            Licencias urbanísticas, memorias descriptivas, presupuestos de obra y mediciones de superficies —
+            todo en un solo portal, con inteligencia artificial integrada.
+        </p>
+        <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/register"
+                class="w-full sm:w-auto bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-8 py-3 transition-colors">
+                Solicitar acceso
+            </a>
+            <a href="/login"
+                class="w-full sm:w-auto border border-ink-600 text-slate-300 hover:text-gold-400 hover:border-gold-500/40 rounded-lg px-8 py-3 transition-colors">
+                Ya tengo cuenta
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 py-20">
+    <div class="text-center mb-12">
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Herramientas</p>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-slate-100">Todo lo que necesita tu estudio, en un solo lugar</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for tool in tools %}
+        <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+            <div class="w-12 h-12 rounded-xl bg-ink-800 border border-ink-600 flex items-center justify-center mb-4">
+                <svg class="w-6 h-6 text-gold-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons[tool.icon] }}" />
+                </svg>
+            </div>
+            <h3 class="text-slate-100 font-semibold mb-1">{{ tool.name }}</h3>
+            <p class="text-slate-400 text-sm leading-relaxed">{{ tool.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="bg-ink-900/40 border-y border-ink-700">
+    <div class="max-w-6xl mx-auto px-6 py-20">
+        <div class="text-center mb-12">
+            <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">¿Para quién es?</p>
+            <h2 class="text-2xl sm:text-3xl font-semibold text-slate-100">Pensado para todo el ciclo del proyecto</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-ink-800 border border-ink-600 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons.building }}" />
+                    </svg>
+                </div>
+                <h3 class="text-slate-100 font-semibold mb-2">Estudios de arquitectura</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Agiliza la redacción de memorias, presupuestos y análisis de viabilidad de tus proyectos,
+                    con informes listos para presentar al cliente o al colegio profesional.
+                </p>
+            </div>
+            <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-ink-800 border border-ink-600 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons.document }}" />
+                    </svg>
+                </div>
+                <h3 class="text-slate-100 font-semibold mb-2">Promotores</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Comprueba la viabilidad urbanística de un solar y obtén una estimación de presupuesto
+                    antes de decidir si un proyecto sale adelante.
+                </p>
+            </div>
+            <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+                <div class="w-10 h-10 rounded-lg bg-ink-800 border border-ink-600 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons.calculator }}" />
+                    </svg>
+                </div>
+                <h3 class="text-slate-100 font-semibold mb-2">Constructoras</h3>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Genera presupuestos de obra desglosados por capítulos y mide superficies reales desde
+                    los planos DXF, con exportación a Excel y PDF.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="max-w-4xl mx-auto px-6 py-24 text-center">
+    <h2 class="text-2xl sm:text-3xl font-semibold text-slate-100 mb-4">Empieza a usar ArchSuite hoy</h2>
+    <p class="text-slate-400 mb-8 max-w-xl mx-auto">
+        Crea tu cuenta y accede a todas las herramientas del portal en un mismo lugar.
+    </p>
+    <a href="/register"
+        class="inline-block bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-8 py-3 transition-colors">
+        Solicitar acceso
+    </a>
+</section>
+{% endblock %}

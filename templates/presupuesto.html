@@ -1,0 +1,134 @@
+{% extends "app_base.html" %}
+{% block title %}ArchPresupuesto · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-10">
+    <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Presupuestos</p>
+    <h1 class="text-3xl font-semibold text-slate-100">Generador de presupuestos de obra</h1>
+    <p class="text-slate-400 mt-2 max-w-2xl">
+        Genera con IA un presupuesto de obra desglosado por capítulos, con partidas, precios de mercado y el
+        resumen económico completo (PEM, gastos generales, beneficio industrial, IVA y PEC).
+    </p>
+</div>
+
+<form id="presupuesto-form" method="post" action="/presupuesto/generar" class="space-y-6 max-w-3xl">
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">1. Datos generales</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre_proyecto">Nombre del proyecto</label>
+                <input type="text" id="nombre_proyecto" name="nombre_proyecto" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Vivienda unifamiliar en Calle Mayor 12">
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="direccion">Dirección</label>
+                <input type="text" id="direccion" name="direccion" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="promotor">Promotor</label>
+                <input type="text" id="promotor" name="promotor" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="arquitecto">Arquitecto</label>
+                <input type="text" id="arquitecto" name="arquitecto" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required value="{{ hoy }}"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">2. Características de la obra</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="tipologia">Tipología</label>
+                <select id="tipologia" name="tipologia" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Vivienda unifamiliar">Vivienda unifamiliar</option>
+                    <option value="Vivienda plurifamiliar">Vivienda plurifamiliar</option>
+                    <option value="Local comercial">Local comercial</option>
+                    <option value="Rehabilitación">Rehabilitación</option>
+                    <option value="Obra nueva">Obra nueva</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="superficie_construida">Superficie construida (m²)</label>
+                <input type="number" step="0.01" min="0" id="superficie_construida" name="superficie_construida" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="num_plantas">Número de plantas</label>
+                <input type="number" min="0" id="num_plantas" name="num_plantas" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="calidad_acabados">Calidad de acabados</label>
+                <select id="calidad_acabados" name="calidad_acabados" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Básica">Básica</option>
+                    <option value="Media">Media</option>
+                    <option value="Alta">Alta</option>
+                    <option value="Lujo">Lujo</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">3. Instalaciones incluidas</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for inst in ["Electricidad", "Fontanería", "Climatización", "Telecomunicaciones"] %}
+            <label class="flex items-center gap-2.5 rounded-lg border border-ink-600 bg-ink-800 px-4 py-2.5 text-sm text-slate-300 hover:border-gold-500/40 cursor-pointer transition-colors">
+                <input type="checkbox" name="instalaciones" value="{{ inst }}"
+                    class="rounded border-ink-600 bg-ink-900 text-gold-500 focus:ring-gold-500/50 focus:ring-offset-0">
+                <span>{{ inst }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">4. Observaciones adicionales</h2>
+        <textarea id="observaciones" name="observaciones" rows="3"
+            class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+            placeholder="Condiciones especiales, calidades concretas, requisitos del promotor..."></textarea>
+    </div>
+
+    <div class="flex justify-center pb-4">
+        <button type="submit" id="submit-btn"
+            class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-8 py-3 transition-colors disabled:opacity-60">
+            <svg id="spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span id="btn-text">Generar presupuesto</span>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_head %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('presupuesto-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('spinner');
+        form.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Generando presupuesto... (puede tardar unos segundos)';
+        });
+    });
+</script>
+{% endblock %}

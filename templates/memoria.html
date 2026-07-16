@@ -1,0 +1,238 @@
+{% extends "app_base.html" %}
+{% block title %}ArchMemoria · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-10">
+    <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Memorias</p>
+    <h1 class="text-3xl font-semibold text-slate-100">Generador de memorias descriptivas</h1>
+    <p class="text-slate-400 mt-2 max-w-2xl">
+        Genera con IA una memoria descriptiva completa para visado colegial a partir de los datos del proyecto.
+    </p>
+</div>
+
+<form id="memoria-form" method="post" action="/memoria/generar" class="space-y-6 max-w-3xl">
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">1. Datos del proyecto</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre_proyecto">Nombre del proyecto</label>
+                <input type="text" id="nombre_proyecto" name="nombre_proyecto" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Vivienda unifamiliar en Calle Mayor 12">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="tipo_obra">Tipo de obra</label>
+                <select id="tipo_obra" name="tipo_obra" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Obra nueva">Obra nueva</option>
+                    <option value="Reforma">Reforma</option>
+                    <option value="Rehabilitación">Rehabilitación</option>
+                    <option value="Cambio de uso">Cambio de uso</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="tipologia">Tipología</label>
+                <select id="tipologia" name="tipologia" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Vivienda unifamiliar">Vivienda unifamiliar</option>
+                    <option value="Vivienda plurifamiliar">Vivienda plurifamiliar</option>
+                    <option value="Local comercial">Local comercial</option>
+                    <option value="Oficinas">Oficinas</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Equipamiento">Equipamiento</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="municipio">Municipio</label>
+                <input type="text" id="municipio" name="municipio" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="provincia">Provincia</label>
+                <input type="text" id="provincia" name="provincia" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="direccion">Dirección completa</label>
+                <input type="text" id="direccion" name="direccion" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="referencia_catastral">Referencia catastral <span class="text-slate-600">(opcional)</span></label>
+                <input type="text" id="referencia_catastral" name="referencia_catastral"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">2. Datos del promotor y técnico</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre_promotor">Nombre del promotor</label>
+                <input type="text" id="nombre_promotor" name="nombre_promotor" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nif_promotor">NIF del promotor</label>
+                <input type="text" id="nif_promotor" name="nif_promotor" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre_arquitecto">Nombre del arquitecto</label>
+                <input type="text" id="nombre_arquitecto" name="nombre_arquitecto" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="numero_colegiado">Número de colegiado</label>
+                <input type="text" id="numero_colegiado" name="numero_colegiado" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">3. Superficies (m²)</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="superficie_parcela">Superficie parcela</label>
+                <input type="number" step="0.01" min="0" id="superficie_parcela" name="superficie_parcela" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="superficie_construida">Superficie construida total</label>
+                <input type="number" step="0.01" min="0" id="superficie_construida" name="superficie_construida" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="superficie_util">Superficie útil total</label>
+                <input type="number" step="0.01" min="0" id="superficie_util" name="superficie_util" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="plantas_sobre_rasante">Plantas sobre rasante</label>
+                <input type="number" min="0" id="plantas_sobre_rasante" name="plantas_sobre_rasante" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="plantas_bajo_rasante">Plantas bajo rasante</label>
+                <input type="number" min="0" id="plantas_bajo_rasante" name="plantas_bajo_rasante" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">4. Materiales</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="estructura">Estructura</label>
+                <select id="estructura" name="estructura" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Hormigón armado">Hormigón armado</option>
+                    <option value="Acero">Acero</option>
+                    <option value="Madera">Madera</option>
+                    <option value="Mixta">Mixta</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="cubierta">Cubierta</label>
+                <select id="cubierta" name="cubierta" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Plana no transitable">Plana no transitable</option>
+                    <option value="Plana transitable">Plana transitable</option>
+                    <option value="Inclinada teja cerámica">Inclinada teja cerámica</option>
+                    <option value="Inclinada pizarra">Inclinada pizarra</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="fachada">Fachada</label>
+                <select id="fachada" name="fachada" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Enfoscado y pintura">Enfoscado y pintura</option>
+                    <option value="Ladrillo cara vista">Ladrillo cara vista</option>
+                    <option value="Panel prefabricado">Panel prefabricado</option>
+                    <option value="SATE">SATE</option>
+                    <option value="Ventilada">Ventilada</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="carpinteria_exterior">Carpintería exterior</label>
+                <select id="carpinteria_exterior" name="carpinteria_exterior" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Aluminio">Aluminio</option>
+                    <option value="PVC">PVC</option>
+                    <option value="Madera">Madera</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="solados_interiores">Solados interiores</label>
+                <select id="solados_interiores" name="solados_interiores" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Gres porcelánico">Gres porcelánico</option>
+                    <option value="Cerámica">Cerámica</option>
+                    <option value="Parquet">Parquet</option>
+                    <option value="Mármol">Mármol</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">5. Instalaciones</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {% for inst in [
+                "Fontanería y saneamiento",
+                "Electricidad e iluminación",
+                "Telecomunicaciones (ITC)",
+                "Calefacción y refrigeración",
+                "Gas natural",
+                "Energía solar térmica",
+                "Energía solar fotovoltaica",
+                "Ascensor",
+            ] %}
+            <label class="flex items-center gap-2.5 rounded-lg border border-ink-600 bg-ink-800 px-4 py-2.5 text-sm text-slate-300 hover:border-gold-500/40 cursor-pointer transition-colors">
+                <input type="checkbox" name="instalaciones" value="{{ inst }}"
+                    class="rounded border-ink-600 bg-ink-900 text-gold-500 focus:ring-gold-500/50 focus:ring-offset-0">
+                <span>{{ inst }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="flex justify-center pb-4">
+        <button type="submit" id="submit-btn"
+            class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-8 py-3 transition-colors disabled:opacity-60">
+            <svg id="spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span id="btn-text">Generar memoria descriptiva</span>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_head %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('memoria-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('spinner');
+        form.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Generando memoria... (puede tardar unos segundos)';
+        });
+    });
+</script>
+{% endblock %}

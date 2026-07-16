@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ArchSuite{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ink: {
+                            950: '#0a0e14',
+                            900: '#10151f',
+                            800: '#171d2b',
+                            700: '#212939',
+                            600: '#2c3648',
+                        },
+                        gold: {
+                            400: '#d4af6a',
+                            500: '#c19a52',
+                            600: '#a9823f',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { background-color: #0a0e14; }
+        .bg-grid {
+            background-image: linear-gradient(rgba(212,175,106,0.05) 1px, transparent 1px),
+                               linear-gradient(90deg, rgba(212,175,106,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-ink-950 text-slate-200 font-sans antialiased">
+    <nav class="border-b border-ink-700 bg-ink-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="px-6 py-4 flex items-center justify-between">
+            <a href="{{ '/dashboard' if request.state.user else '/' }}" class="flex items-center gap-2">
+                <span class="text-gold-400 text-xl font-semibold tracking-wide">Arch<span class="text-slate-100">Suite</span></span>
+            </a>
+            {% if request.state.user %}
+            <div class="flex items-center gap-4 text-sm">
+                <a href="/perfil" class="text-slate-400 hover:text-gold-400 transition-colors">{{ request.state.user.nombre }}</a>
+                <a href="/dashboard" class="text-slate-300 hover:text-gold-400 transition-colors">Panel</a>
+                {% if request.state.user.rol.value == 'admin' %}
+                <a href="/admin" class="text-slate-300 hover:text-gold-400 transition-colors">Admin</a>
+                {% endif %}
+                <a href="/logout" class="text-slate-400 hover:text-red-400 transition-colors">Cerrar sesión</a>
+            </div>
+            {% else %}
+            <div class="flex items-center gap-4 text-sm">
+                <a href="/login" class="text-slate-300 hover:text-gold-400 transition-colors">Iniciar sesión</a>
+                <a href="/register" class="bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-4 py-2 transition-colors">Solicitar acceso</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-ink-700 mt-24">
+        <div class="max-w-6xl mx-auto px-6 py-6 text-center text-xs text-slate-500">
+            ArchSuite &mdash; Portal para arquitectos en España
+        </div>
+    </footer>
+</body>
+</html>

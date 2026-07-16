@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Crear cuenta · ArchSuite{% endblock %}
+
+{% block content %}
+<div class="bg-grid min-h-[calc(100vh-73px)] flex items-center justify-center px-6 py-12">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="text-3xl font-semibold tracking-wide mb-3">
+                <span class="text-gold-400">Arch</span><span class="text-slate-100">Suite</span>
+            </div>
+            <h1 class="text-2xl font-semibold text-slate-100">Crea tu cuenta</h1>
+            <p class="text-slate-400 text-sm mt-2">Únete a ArchSuite y gestiona tus proyectos</p>
+        </div>
+
+        <div class="bg-ink-900 border border-ink-700 rounded-xl shadow-xl shadow-black/30 p-8">
+            {% if error %}
+            <div class="mb-5 rounded-lg border border-red-900/50 bg-red-950/40 text-red-300 text-sm px-4 py-3">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="post" action="/auth/register" class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" required autofocus
+                            class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                            placeholder="Ana">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5" for="apellidos">Apellidos</label>
+                        <input type="text" id="apellidos" name="apellidos" required
+                            class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                            placeholder="García Ruiz">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="empresa">Empresa <span class="text-slate-600">(opcional)</span></label>
+                    <input type="text" id="empresa" name="empresa"
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                        placeholder="Estudio García Arquitectura">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="email">Email</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                        placeholder="tu@estudio.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required minlength="8"
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                        placeholder="Mínimo 8 caracteres">
+                </div>
+                <button type="submit"
+                    class="w-full bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg py-2.5 transition-colors">
+                    Crear cuenta
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-sm text-slate-500 mt-6">
+            ¿Ya tienes cuenta?
+            <a href="/login" class="text-gold-400 hover:text-gold-300 font-medium">Inicia sesión</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

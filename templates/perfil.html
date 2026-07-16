@@ -1,0 +1,165 @@
+{% extends "app_base.html" %}
+{% block title %}Mi perfil · ArchSuite{% endblock %}
+
+{% block main %}
+{% set tipo_style = {
+    'licencia': 'text-blue-400 bg-blue-950/40 border-blue-900/50',
+    'memoria': 'text-emerald-400 bg-emerald-950/40 border-emerald-900/50',
+    'presupuesto': 'text-orange-400 bg-orange-950/40 border-orange-900/50',
+    'superficie': 'text-slate-300 bg-slate-800/60 border-slate-600/50',
+    'pliego': 'text-purple-400 bg-purple-950/40 border-purple-900/50',
+} %}
+
+<div class="mb-10">
+    <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Mi cuenta</p>
+    <h1 class="text-3xl font-semibold text-slate-100">Perfil</h1>
+    <p class="text-slate-400 mt-2">{{ user.email }}</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 max-w-5xl">
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">Mis datos</h2>
+        <form method="post" action="/perfil/actualizar" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" value="{{ user.nombre }}" required
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="apellidos">Apellidos</label>
+                    <input type="text" id="apellidos" name="apellidos" value="{{ user.apellidos }}" required
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="empresa">Empresa</label>
+                <input type="text" id="empresa" name="empresa" value="{{ user.empresa or '' }}"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" value="{{ user.telefono or '' }}"
+                    placeholder="+34 600 000 000"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Email</label>
+                <input type="email" value="{{ user.email }}" disabled
+                    class="w-full rounded-lg bg-ink-800/50 border border-ink-700 px-4 py-2.5 text-slate-500 cursor-not-allowed">
+            </div>
+            <button type="submit"
+                class="w-full bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg py-2.5 transition-colors">
+                Guardar cambios
+            </button>
+        </form>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">Cambiar contraseña</h2>
+
+        {% if error_password %}
+        <div class="mb-4 rounded-lg border border-red-900/50 bg-red-950/40 text-red-300 text-sm px-4 py-3">{{ error_password }}</div>
+        {% endif %}
+        {% if success_password %}
+        <div class="mb-4 rounded-lg border border-emerald-900/50 bg-emerald-950/40 text-emerald-300 text-sm px-4 py-3">{{ success_password }}</div>
+        {% endif %}
+
+        <form method="post" action="/perfil/password" class="space-y-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="password_actual">Contraseña actual</label>
+                <input type="password" id="password_actual" name="password_actual" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="password_nueva">Nueva contraseña</label>
+                <input type="password" id="password_nueva" name="password_nueva" required minlength="8"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Mínimo 8 caracteres">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="password_confirmar">Confirmar nueva contraseña</label>
+                <input type="password" id="password_confirmar" name="password_confirmar" required minlength="8"
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+            </div>
+            <button type="submit"
+                class="w-full border border-ink-600 text-slate-300 hover:text-gold-400 hover:border-gold-500/40 rounded-lg py-2.5 transition-colors">
+                Cambiar contraseña
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="mb-10">
+    <h2 class="text-sm font-medium text-slate-400 uppercase tracking-widest mb-4">Resumen de actividad</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl">
+        {% for tipo, label in tipo_labels.items() %}
+        <div class="rounded-xl border p-4 {{ tipo_style.get(tipo, 'text-slate-300 bg-slate-800/60 border-slate-600/50') }}">
+            <p class="text-xs opacity-80 mb-1">{{ label }}</p>
+            <p class="text-xl font-semibold">{{ resumen.get(tipo, 0) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div>
+    <h2 class="text-sm font-medium text-slate-400 uppercase tracking-widest mb-4">Mis proyectos ({{ proyectos|length }})</h2>
+
+    {% if proyectos %}
+    <div class="border border-ink-700 rounded-2xl overflow-hidden bg-ink-900/40 max-w-5xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-ink-800/60 text-slate-400 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="text-left font-medium px-6 py-3">Proyecto</th>
+                        <th class="text-left font-medium px-6 py-3">Tipo</th>
+                        <th class="text-left font-medium px-6 py-3">Fecha</th>
+                        <th class="text-left font-medium px-6 py-3">Estado</th>
+                        <th class="text-right font-medium px-6 py-3">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ink-700">
+                    {% for p in proyectos %}
+                    <tr class="hover:bg-ink-800/40 transition-colors">
+                        <td class="px-6 py-3 text-slate-200 font-medium">{{ p.nombre_proyecto }}</td>
+                        <td class="px-6 py-3">
+                            <span class="inline-flex items-center text-xs font-medium rounded-full border px-2.5 py-1 {{ tipo_style.get(p.tipo.value, 'text-slate-300 bg-slate-800/60 border-slate-600/50') }}">
+                                {{ tipo_labels[p.tipo.value] }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-3 text-slate-400">{{ p.fecha_creacion.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-6 py-3">
+                            {% if p.estado.value == 'completado' %}
+                            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 bg-emerald-950/40 border border-emerald-900/50 rounded-full px-2.5 py-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Completado
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-amber-400 bg-amber-950/40 border border-amber-900/50 rounded-full px-2.5 py-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Borrador
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3">
+                            <div class="flex items-center justify-end gap-4">
+                                <a href="/proyectos/{{ p.id }}" class="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors">Ver resultado</a>
+                                <form method="post" action="/perfil/proyectos/{{ p.id }}/eliminar"
+                                    onsubmit="return confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.');">
+                                    <button type="submit" class="text-xs font-medium text-red-400 hover:text-red-300 transition-colors">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="border border-dashed border-ink-600 rounded-2xl py-16 flex flex-col items-center justify-center text-center bg-ink-900/40 max-w-5xl">
+        <p class="text-slate-300 font-medium">Aún no has generado ningún proyecto.</p>
+        <p class="text-slate-500 text-sm mt-1 max-w-sm">¡Usa las herramientas del panel para empezar!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

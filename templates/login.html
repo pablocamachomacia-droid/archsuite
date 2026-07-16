@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión · ArchSuite{% endblock %}
+
+{% block content %}
+<div class="bg-grid min-h-[calc(100vh-73px)] flex items-center justify-center px-6">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="text-3xl font-semibold tracking-wide mb-3">
+                <span class="text-gold-400">Arch</span><span class="text-slate-100">Suite</span>
+            </div>
+            <h1 class="text-2xl font-semibold text-slate-100">Bienvenido de nuevo</h1>
+            <p class="text-slate-400 text-sm mt-2">Accede a tu panel de herramientas ArchSuite</p>
+        </div>
+
+        <div class="bg-ink-900 border border-ink-700 rounded-xl shadow-xl shadow-black/30 p-8">
+            {% if error %}
+            <div class="mb-5 rounded-lg border border-red-900/50 bg-red-950/40 text-red-300 text-sm px-4 py-3">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="post" action="/auth/login" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="email">Email</label>
+                    <input type="email" id="email" name="email" required autofocus
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                        placeholder="tu@estudio.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5" for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                        placeholder="••••••••">
+                </div>
+                <button type="submit"
+                    class="w-full bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg py-2.5 transition-colors">
+                    Iniciar sesión
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-sm text-slate-500 mt-6">
+            ¿No tienes cuenta?
+            <a href="/register" class="text-gold-400 hover:text-gold-300 font-medium">Regístrate</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

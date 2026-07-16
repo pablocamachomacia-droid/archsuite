@@ -1,0 +1,261 @@
+{% extends "app_base.html" %}
+{% block title %}Superficies · {{ filename }} · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+    <div>
+        <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Mediciones</p>
+        <h1 class="text-2xl font-semibold text-slate-100">{{ project_info.proyecto or filename }}</h1>
+        <p class="text-slate-400 mt-1">
+            Archivo: {{ filename }}
+            {%- if units and units is mapping %} &middot; Unidades del dibujo: {{ units.label }}
+                &middot; Factor de conversión a m²: {{ units.factor_label }}{% endif %}
+        </p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="/surface/{{ project_id }}/excel"
+            class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Excel
+        </a>
+        <a href="/surface/{{ project_id }}/pdf"
+            class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            PDF
+        </a>
+        <a href="/surface/{{ project_id }}/bc3" title="Formato BC3 compatible con Presto, TCQ y Arquímedes"
+            class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Exportar BC3
+        </a>
+        <a href="/surface"
+            class="inline-flex items-center gap-2 rounded-lg border border-ink-600 px-4 py-2 text-sm text-slate-300 hover:text-gold-400 hover:border-gold-500/40 transition-colors">
+            Nuevo plano
+        </a>
+    </div>
+</div>
+
+{% if guardado %}
+<div class="rounded-2xl border border-emerald-900/50 bg-emerald-950/30 p-4 mb-6 max-w-3xl flex items-start gap-3">
+    <svg class="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+    </svg>
+    <p class="text-sm text-emerald-200">Clasificación guardada correctamente.</p>
+</div>
+{% endif %}
+
+{% if units and units is mapping and units.asumido %}
+<div class="rounded-2xl border border-amber-900/50 bg-amber-950/30 p-4 mb-6 max-w-3xl flex items-start gap-3">
+    <svg class="w-5 h-5 shrink-0 text-amber-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+    </svg>
+    <p class="text-sm text-amber-200">
+        <strong>Unidades no definidas en el plano</strong> — se han asumido milímetros para calcular las
+        superficies en m². Si el plano estaba dibujado en otra unidad, las áreas mostradas no serán correctas.
+    </p>
+</div>
+{% endif %}
+
+{% if deteccion %}
+<div class="rounded-2xl border border-ink-700 bg-ink-900/60 px-4 py-3 mb-6 max-w-3xl">
+    <p class="text-xs text-slate-400">
+        <span class="text-slate-200 font-medium">{{ deteccion.directas }}</span> polilíneas directas
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.bloques }}</span> desde bloques
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.hatches }}</span> desde hatches
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.auto_cerradas }}</span> cerradas automáticamente
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.desde_lineas }}</span> desde líneas
+        {% if deteccion.desde_circulos or deteccion.desde_elipses %}
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.desde_circulos }}</span> círculos
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.desde_elipses }}</span> elipses
+        {% endif %}
+        {% if deteccion.descartadas_capa %}
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.descartadas_capa }}</span> descartadas por capa ignorada
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+{% if project_info %}
+<div class="bg-ink-900 border border-ink-700 rounded-2xl p-5 mb-6 max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+    {% if project_info.proyecto %}<div><span class="text-slate-500">Proyecto: </span><span class="text-slate-200">{{ project_info.proyecto }}</span></div>{% endif %}
+    {% if project_info.cliente %}<div><span class="text-slate-500">Cliente: </span><span class="text-slate-200">{{ project_info.cliente }}</span></div>{% endif %}
+    {% if project_info.ubicacion %}<div><span class="text-slate-500">Ubicación: </span><span class="text-slate-200">{{ project_info.ubicacion }}</span></div>{% endif %}
+    {% if project_info.arquitecto %}<div><span class="text-slate-500">Arquitecto / Estudio: </span><span class="text-slate-200">{{ project_info.arquitecto }}</span></div>{% endif %}
+</div>
+{% endif %}
+
+{% set por_clasificacion = totales.por_clasificacion or {} %}
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 max-w-3xl">
+    <div class="bg-ink-900 border border-ink-700 rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="text-xs text-slate-400">Construida</span>
+        </div>
+        <p class="text-lg font-semibold text-slate-100">{{ "%.2f"|format(por_clasificacion.get("construida", 0)) }} m²</p>
+    </div>
+    <div class="bg-ink-900 border border-ink-700 rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-xs text-slate-400">Útil</span>
+        </div>
+        <p class="text-lg font-semibold text-slate-100">{{ "%.2f"|format(por_clasificacion.get("util", 0)) }} m²</p>
+    </div>
+    <div class="bg-ink-900 border border-ink-700 rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+            <span class="text-xs text-slate-400">Sin clasificar</span>
+        </div>
+        <p class="text-lg font-semibold text-slate-100">{{ "%.2f"|format(por_clasificacion.get(none, 0)) }} m²</p>
+    </div>
+    <div class="bg-ink-900 border border-gold-500/40 rounded-xl p-4">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs text-gold-400">Total general</span>
+        </div>
+        <p class="text-lg font-semibold text-gold-400">{{ "%.2f"|format(totales.total_general or 0) }} m²</p>
+    </div>
+</div>
+
+<form method="post" action="/surface/{{ project_id }}/reclasificar">
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl overflow-hidden max-w-4xl">
+        <div class="px-6 py-4 border-b border-ink-700 bg-ink-800/40 flex items-center justify-between">
+            <div>
+                <span class="text-slate-100 font-semibold">Espacios detectados</span>
+                <span class="text-slate-500 text-xs ml-2">({{ spaces|length }})</span>
+            </div>
+            <span class="text-xs text-slate-500">Corrige el nombre o la clasificación si hace falta</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="text-slate-500 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="text-left font-medium px-6 py-2.5">Espacio</th>
+                        <th class="text-left font-medium px-3 py-2.5">Capa</th>
+                        <th class="text-left font-medium px-3 py-2.5">Clasificación</th>
+                        <th class="text-right font-medium px-6 py-2.5">Superficie (m²)</th>
+                        <th class="text-right font-medium px-6 py-2.5">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ink-700/60" id="espacios-tbody">
+                    {% for s in spaces %}
+                    <tr data-espacio-id="{{ s.id }}">
+                        <td class="px-6 py-2 text-slate-200">
+                            <div class="flex items-center gap-2">
+                                <input type="text" name="nombre_{{ s.id }}" value="{{ s.name }}"
+                                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                                {% if s.auto_closed %}
+                                <span class="shrink-0 text-amber-400 cursor-help" title="Polilínea cerrada automáticamente — verifica que el área sea correcta">&#9888;</span>
+                                {% endif %}
+                            </div>
+                            {% if s.from_block or s.from_hatch or s.from_lines or s.from_circle or s.from_ellipse %}
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                {% if s.from_block %}
+                                <span class="inline-flex items-center text-[10px] font-medium rounded-full border border-purple-900/50 bg-purple-950/40 text-purple-300 px-2 py-0.5"
+                                    title="{% if s.block_name %}Bloque: {{ s.block_name }}{% else %}Detectado dentro de un bloque INSERT{% endif %}">Bloque</span>
+                                {% endif %}
+                                {% if s.from_hatch %}
+                                <span class="inline-flex items-center text-[10px] font-medium rounded-full border border-cyan-900/50 bg-cyan-950/40 text-cyan-300 px-2 py-0.5"
+                                    title="Detectado a partir del contorno de un HATCH">Hatch</span>
+                                {% endif %}
+                                {% if s.from_lines %}
+                                <span class="inline-flex items-center text-[10px] font-medium rounded-full border border-amber-900/50 bg-amber-950/40 text-amber-300 px-2 py-0.5"
+                                    title="Detectado uniendo segmentos LINE sueltos que forman un contorno cerrado">Líneas</span>
+                                {% endif %}
+                                {% if s.from_circle %}
+                                <span class="inline-flex items-center text-[10px] font-medium rounded-full border border-blue-900/50 bg-blue-950/40 text-blue-300 px-2 py-0.5"
+                                    title="Detectado como CIRCLE{% if s.radius_m %} — radio {{ s.radius_m }} m{% endif %}">Círculo</span>
+                                {% endif %}
+                                {% if s.from_ellipse %}
+                                <span class="inline-flex items-center text-[10px] font-medium rounded-full border border-purple-900/50 bg-purple-950/40 text-purple-300 px-2 py-0.5"
+                                    title="Detectado como ELLIPSE completa">Elipse</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="px-3 py-2 text-slate-400">{{ s.layer }}</td>
+                        <td class="px-3 py-2">
+                            <select name="clasificacion_{{ s.id }}"
+                                class="rounded-lg bg-ink-800 border border-ink-600 px-3 py-1.5 text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                                <option value="construida" {% if s.classification == "construida" %}selected{% endif %}>Construida</option>
+                                <option value="util" {% if s.classification == "util" %}selected{% endif %}>Útil</option>
+                                <option value="" {% if not s.classification %}selected{% endif %}>Sin clasificar</option>
+                            </select>
+                        </td>
+                        <td class="px-6 py-2 text-slate-200 text-right">{{ "%.2f"|format(s.area) }}</td>
+                        <td class="px-6 py-2 text-right">
+                            <button type="button" data-espacio-id="{{ s.id }}"
+                                class="btn-eliminar-espacio text-slate-500 hover:text-red-400 text-xs font-medium transition-colors">
+                                &#10005; Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="px-6 py-4 border-t border-ink-700 bg-ink-800/20 flex justify-end">
+            <button type="submit"
+                class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-5 py-2.5 text-sm transition-colors">
+                Guardar clasificación
+            </button>
+        </div>
+    </div>
+</form>
+
+<p class="text-slate-500 text-xs mt-8 max-w-3xl">
+    Superficies calculadas automáticamente a partir de las polilíneas cerradas del DXF, convertidas a m² según la
+    unidad de dibujo detectada. Verifica la clasificación de cada espacio (construida / útil) antes de un uso
+    contractual.
+</p>
+{% endblock %}
+
+{% block extra_head %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tbody = document.getElementById('espacios-tbody');
+        if (!tbody) return;
+
+        tbody.addEventListener('click', async (event) => {
+            const btn = event.target.closest('.btn-eliminar-espacio');
+            if (!btn) return;
+
+            if (!confirm('¿Eliminar este espacio? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            const espacioId = btn.dataset.espacioId;
+            btn.disabled = true;
+
+            try {
+                const resp = await fetch('/surface/{{ project_id }}/eliminar-espacio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ espacio_id: espacioId }),
+                });
+                if (!resp.ok) {
+                    alert('No se pudo eliminar el espacio.');
+                    btn.disabled = false;
+                    return;
+                }
+                const row = tbody.querySelector(`tr[data-espacio-id="${CSS.escape(espacioId)}"]`);
+                if (row) row.remove();
+            } catch (err) {
+                alert('No se pudo eliminar el espacio.');
+                btn.disabled = false;
+            }
+        });
+    });
+</script>
+{% endblock %}

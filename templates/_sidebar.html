@@ -1,0 +1,15 @@
+<aside class="hidden lg:flex lg:w-64 lg:flex-col shrink-0 border-r border-ink-700 bg-ink-900/40 sticky top-[73px] h-[calc(100vh-73px)]">
+    <nav class="flex-1 px-3 py-6 space-y-1">
+        {% for item in sidebar_items %}
+        <a href="{{ item.url }}"
+            {% if not item.url.startswith('#') and not item.url.startswith('/') %}target="_blank" rel="noopener"{% endif %}
+            class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors
+            {% if item.active %}bg-ink-800 text-gold-400 ring-1 ring-inset ring-gold-500/20{% else %}text-slate-400 hover:text-slate-100 hover:bg-ink-800/60{% endif %}">
+            <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="{{ icons[item.icon] }}" />
+            </svg>
+            {{ item.label }}
+        </a>
+        {% endfor %}
+    </nav>
+</aside>

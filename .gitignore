@@ -1,0 +1,13 @@
+# Secretos — nunca subir
+.env
+
+# Entorno virtual
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Base de datos local y logs
+*.db
+server.log

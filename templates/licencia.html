@@ -1,0 +1,121 @@
+{% extends "app_base.html" %}
+{% block title %}ArchLicencia · ArchSuite{% endblock %}
+
+{% block main %}
+<div class="mb-10">
+    <p class="text-gold-400 text-xs font-medium uppercase tracking-widest mb-2">Licencias</p>
+    <h1 class="text-3xl font-semibold text-slate-100">Análisis de viabilidad urbanística</h1>
+    <p class="text-slate-400 mt-2 max-w-2xl">
+        Genera un informe orientativo con IA sobre la viabilidad urbanística de un solar: clasificación, parámetros
+        aplicables, tipo de licencia necesaria y un semáforo de viabilidad.
+    </p>
+</div>
+
+<form id="licencia-form" method="post" action="/licencia/analizar" class="space-y-6 max-w-3xl">
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">1. Ubicación del solar</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="sm:col-span-2">
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="direccion">Dirección del solar</label>
+                <input type="text" id="direccion" name="direccion" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Calle Mayor 12">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="municipio">Municipio</label>
+                <input type="text" id="municipio" name="municipio" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Madrid">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="provincia">Provincia</label>
+                <input type="text" id="provincia" name="provincia" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="Madrid">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">2. Datos urbanísticos</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="clasificacion_urbanistica">Clasificación urbanística</label>
+                <select id="clasificacion_urbanistica" name="clasificacion_urbanistica" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Suelo urbano consolidado">Suelo urbano consolidado</option>
+                    <option value="Suelo urbano no consolidado">Suelo urbano no consolidado</option>
+                    <option value="Suelo urbanizable ordenado">Suelo urbanizable ordenado</option>
+                    <option value="Suelo urbanizable sectorizado">Suelo urbanizable sectorizado</option>
+                    <option value="Suelo urbanizable no sectorizado">Suelo urbanizable no sectorizado</option>
+                    <option value="Suelo no urbanizable común">Suelo no urbanizable común</option>
+                    <option value="Suelo no urbanizable protegido">Suelo no urbanizable protegido</option>
+                    <option value="No lo sé / a consultar">No lo sé / a consultar</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="uso_previsto">Uso previsto</label>
+                <select id="uso_previsto" name="uso_previsto" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition">
+                    <option value="">Selecciona una opción</option>
+                    <option value="Residencial unifamiliar">Residencial unifamiliar</option>
+                    <option value="Residencial plurifamiliar">Residencial plurifamiliar</option>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Oficinas">Oficinas</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Dotacional / equipamiento">Dotacional / equipamiento</option>
+                    <option value="Mixto">Mixto</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="superficie_solar">Superficie del solar (m²)</label>
+                <input type="number" step="0.01" min="0" id="superficie_solar" name="superficie_solar" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="450">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5" for="edificabilidad">Edificabilidad (m² techo)</label>
+                <input type="number" step="0.01" min="0" id="edificabilidad" name="edificabilidad" required
+                    class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+                    placeholder="600">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-ink-900 border border-ink-700 rounded-2xl p-6">
+        <h2 class="text-sm font-semibold text-slate-100 border-b border-ink-700 pb-3 mb-5">3. Descripción del proyecto</h2>
+        <textarea id="descripcion_proyecto" name="descripcion_proyecto" rows="4" required
+            class="w-full rounded-lg bg-ink-800 border border-ink-600 px-4 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 transition"
+            placeholder="Describe la actuación prevista: obra nueva, ampliación, rehabilitación, cambio de uso... y cualquier condicionante conocido del solar (zona protegida, elementos catalogados, antecedentes)."></textarea>
+    </div>
+
+    <div class="flex justify-center pb-4">
+        <button type="submit" id="submit-btn"
+            class="inline-flex items-center gap-2 bg-gold-500 hover:bg-gold-600 text-ink-950 font-semibold rounded-lg px-8 py-3 transition-colors disabled:opacity-60">
+            <svg id="spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span id="btn-text">Analizar viabilidad</span>
+        </button>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_head %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('licencia-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const spinner = document.getElementById('spinner');
+        form.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            spinner.classList.remove('hidden');
+            btnText.textContent = 'Analizando viabilidad... (puede tardar unos segundos)';
+        });
+    });
+</script>
+{% endblock %}
