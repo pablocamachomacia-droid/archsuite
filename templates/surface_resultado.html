@@ -84,6 +84,10 @@
         <span class="text-ink-600 mx-1">&middot;</span>
         <span class="text-slate-200 font-medium">{{ deteccion.descartadas_capa }}</span> descartadas por capa ignorada
         {% endif %}
+        {% if deteccion.descartadas_envolvente %}
+        <span class="text-ink-600 mx-1">&middot;</span>
+        <span class="text-slate-200 font-medium">{{ deteccion.descartadas_envolvente }}</span> descartadas por ser contorno envolvente (cajetín/límite de parcela)
+        {% endif %}
     </p>
 </div>
 {% endif %}

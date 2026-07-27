@@ -268,6 +268,64 @@ def _match_label(polygon_points, labels):
     return None
 
 
+def _polygon_centroid(points):
+    """Centroide exacto de un polígono simple (fórmula del área con signo).
+    Se usa como punto de muestra para _discard_container_candidates: para
+    un polígono convexo o mínimamente cóncavo, este punto siempre cae
+    dentro, a diferencia de la media simple de los vértices."""
+    area2 = 0.0
+    cx = 0.0
+    cy = 0.0
+    n = len(points)
+    for i in range(n):
+        x0, y0 = points[i].x, points[i].y
+        x1, y1 = points[(i + 1) % n].x, points[(i + 1) % n].y
+        cross = x0 * y1 - x1 * y0
+        area2 += cross
+        cx += (x0 + x1) * cross
+        cy += (y0 + y1) * cross
+
+    if area2 == 0:
+        return Vec2(sum(p.x for p in points) / n, sum(p.y for p in points) / n)
+
+    factor = 1.0 / (3.0 * area2)
+    return Vec2(cx * factor, cy * factor)
+
+
+def _discard_container_candidates(candidatos):
+    """Descarta candidatos cuyo polígono englobe geométricamente a otro
+    candidato más pequeño (su centroide cae dentro).
+
+    Las habitaciones de una misma planta no se solapan entre sí: si un
+    polígono SÍ contiene a otro, no es una habitación real sino un contorno
+    envolvente — el cajetín del plano, el límite de parcela, el perímetro
+    exterior del edificio... — dibujado como polilínea cerrada en la misma
+    capa que las habitaciones (típico en capa "0" de AutoCAD). Sin este
+    filtro, ese contorno puede colarse como espacio (si su área cae por
+    debajo de MAX_POLYLINE_AREA_M2) y además "robar" la etiqueta de texto de
+    una habitación real cercana cuyo rótulo esté fuera de su polilínea pero
+    dentro del contorno envolvente.
+
+    Devuelve (candidatos_filtrados, descartados)."""
+    descartados = 0
+    resultado = []
+    for candidato in candidatos:
+        centroides_menores = [
+            _polygon_centroid(otro["points"])
+            for otro in candidatos
+            if otro is not candidato and otro["area_dibujo"] < candidato["area_dibujo"]
+        ]
+        es_envolvente = any(
+            is_point_in_polygon_2d(centroide, candidato["points"]) >= 0
+            for centroide in centroides_menores
+        )
+        if es_envolvente:
+            descartados += 1
+            continue
+        resultado.append(candidato)
+    return resultado, descartados
+
+
 _LAYER_NAME_SUFFIXES = {
     "UTIL",
     "UTILES",
@@ -716,11 +774,14 @@ def parse_dxf(file_path):
     unidades: dict {label, insunits_code, factor_conversion, factor_label,
         asumido} con la información de conversión usada.
     resumen_deteccion: dict {directas, bloques, hatches, auto_cerradas,
-        desde_lineas, desde_circulos, desde_elipses, descartadas_capa} con
-        el recuento de espacios detectados por cada vía y de geometrías
-        descartadas por estar en una capa de IGNORED_LAYERS.
-        `descartadas_capa` solo está disponible al analizar el DXF
-        original — no se recalcula al volver a ver un proyecto ya
+        desde_lineas, desde_circulos, desde_elipses, descartadas_capa,
+        descartadas_envolvente} con el recuento de espacios detectados por
+        cada vía, de geometrías descartadas por estar en una capa de
+        IGNORED_LAYERS y de candidatos descartados por ser un contorno
+        envolvente de otro candidato más pequeño (ver
+        _discard_container_candidates). `descartadas_capa` y
+        `descartadas_envolvente` solo están disponibles al analizar el DXF
+        original — no se recalculan al volver a ver un proyecto ya
         guardado, porque esa información no forma parte de los espacios
         persistidos.
     """
@@ -751,6 +812,8 @@ def parse_dxf(file_path):
     candidatos.extend(_from_hatches(msp, factor))
     candidatos.extend(candidatos_lineas)
     candidatos.extend(candidatos_curvos)
+
+    candidatos, descartadas_envolvente = _discard_container_candidates(candidatos)
 
     if not candidatos:
         raise DXFParseError(
@@ -789,6 +852,7 @@ def parse_dxf(file_path):
     layers = sorted({s["layer"] for s in spaces})
     resumen = resumen_deteccion(spaces)
     resumen["descartadas_capa"] = descartadas_capa
+    resumen["descartadas_envolvente"] = descartadas_envolvente
     return spaces, layers, units_info, resumen
 
 
