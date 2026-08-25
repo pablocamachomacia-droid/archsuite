@@ -73,7 +73,8 @@ En http://127.0.0.1:8081. La base SQLite se crea sola al primer arranque.
 
 ## Despliegue
 
-`Procfile` y `render.yaml` incluidos. En producción sobre **Railway**.
+Preparado para desplegar con `Procfile` (Railway, Heroku) o `render.yaml` (Render). Estuvo en
+producción en Railway; ese despliegue ya no está levantado.
 
 ## Origen
 
