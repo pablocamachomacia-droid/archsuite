@@ -2,6 +2,18 @@
 
 **Portal web con cinco herramientas de IA para el trabajo de estudio de un arquitecto.**
 
+> **Repositorio archivado.** ArchSuite no está en desarrollo activo y su despliegue no está
+> levantado. El trabajo en herramientas para arquitectura continúa en
+> [**archmuse**](https://github.com/pablocamachomacia/archmuse), que ataca el mismo problema desde
+> otro ángulo: un copiloto agéntico sobre planos reales, en vez de un portal de generadores
+> documentales. No es un sustituto pieza por pieza — ArchLicencia, ArchMemoria, ArchPresupuesto y
+> ArchPliego no tienen equivalente allí todavía.
+>
+> La quinta herramienta, la medición de superficies, sí sigue viva y mantenida por separado en
+> [**archsurface**](https://github.com/pablocamachomacia/archsurface).
+>
+> El código se queda aquí, legible y clonable. Simplemente no espera commits.
+
 [![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Claude API](https://img.shields.io/badge/Claude-Sonnet%204.5-D97757?logo=anthropic&logoColor=white)](https://www.anthropic.com/api)
