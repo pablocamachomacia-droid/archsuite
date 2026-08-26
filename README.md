@@ -55,7 +55,7 @@ python -m venv venv
 venv\Scripts\activate          # Linux/macOS: source venv/bin/activate
 pip install -r requirements.txt
 
-cp railway.env.example .env    # y rellena ANTHROPIC_API_KEY y SECRET_KEY
+cp .env.example .env           # y rellena ANTHROPIC_API_KEY y SECRET_KEY
 python -m uvicorn main:app --reload --port 8081
 ```
 
